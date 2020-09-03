@@ -47,14 +47,23 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: RaisedButton(
-            onPressed: () async {
-              dynamic data = await BaiduOcr.idcardOCROnlineFront();
-              print(data);
-            },
-            child: Text('身份证识别'),
-          ),
+        body: Column(
+          children: [
+            RaisedButton(
+              onPressed: () async {
+                CardFront data = await BaiduOcr.idcardOCROnlineFront();
+                print(data.toJson());
+              },
+              child: Text('身份证识别'),
+            ),
+            RaisedButton(
+              onPressed: () async {
+                CardBack data = await BaiduOcr.idcardOCROnlineBack();
+                print(data.toJson());
+              },
+              child: Text('身份证背面识别'),
+            ),
+          ],
         ),
       ),
     );

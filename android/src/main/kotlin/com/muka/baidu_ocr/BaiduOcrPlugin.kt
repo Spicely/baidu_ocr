@@ -1,9 +1,9 @@
 package com.muka.baidu_ocr
 
-import android.R.attr
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.NonNull
 import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
@@ -97,6 +97,9 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
             "idcardOCROnlineFront" -> {
                 idcardOCROnlineFrontCall(call, result);
             }
+            "idcardOCROnlineBack" -> {
+                idcardOCROnlineBackCall(call, result)
+            }
             else -> result.notImplemented()
         }
     }
@@ -108,7 +111,17 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT)
         activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_FRONT] = result
+    } /// 身份证反面拍照识别
+
+    private fun idcardOCROnlineBackCall(call: MethodCall, result: Result) {
+        val intent = Intent(activity, CameraActivity::class.java)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+                getSaveFile(activity).absolutePath)
+        intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_BACK)
+        activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
+        resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_BACK] = result
     }
+
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
@@ -147,7 +160,18 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
             override fun onResult(result: IDCardResult?) {
                 if (result != null) {
                     val result1: Result? = resultMap[contentType]
-                    result1?.success(result.jsonRes)
+                    var data = HashMap<String, String?>()
+                    data["name"] = result.name?.toString()
+                    data["gender"] = result.gender?.toString()
+                    data["ethnic"] = result.ethnic?.toString()
+                    data["birthday"] = result.birthday?.toString()
+                    data["address"] = result.address?.toString()
+                    data["number"] = result.idNumber?.toString()
+                    data["signDate"] = result.signDate?.toString()
+                    data["expiryDate"] = result.expiryDate?.toString()
+                    data["issueAuthority"] = result.issueAuthority?.toString()
+                    data["filePath"] = filePath
+                    result1?.success(data)
                 }
             }
 
