@@ -170,7 +170,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                     data["signDate"] = result.signDate?.toString()
                     data["expiryDate"] = result.expiryDate?.toString()
                     data["issueAuthority"] = result.issueAuthority?.toString()
-                    data["filePath"] = filePath
+                    data["filePath"] = param.imageFile.path
                     result1?.success(data)
                 }
             }
