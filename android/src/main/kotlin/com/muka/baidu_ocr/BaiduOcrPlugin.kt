@@ -22,6 +22,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.File
 
 
@@ -39,6 +41,10 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
 
     //身份证
     private val REQUEST_CODE_CAMERA = 102
+
+    //银行卡识别
+    private val REQUEST_CODE_BANKCARD = 111
+
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.getFlutterEngine().dartExecutor, "com.muka.baidu_ocr")
@@ -100,6 +106,9 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
             "idcardOCROnlineBack" -> {
                 idcardOCROnlineBackCall(call, result)
             }
+            "bankCardOCROnline" -> {
+                bankCardOCROnlineCall(call, result)
+            }
             else -> result.notImplemented()
         }
     }
@@ -121,6 +130,15 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_BACK] = result
     }
 
+    /// 银行卡识别
+    private fun bankCardOCROnlineCall(call: MethodCall, result: Result) {
+        val intent = Intent(activity, CameraActivity::class.java)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, java.lang.String.valueOf(REQUEST_CODE_BANKCARD)).absolutePath)
+        intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_BANK_CARD)
+        activity.startActivityForResult(intent, REQUEST_CODE_BANKCARD)
+        resultMap[java.lang.String.valueOf(REQUEST_CODE_BANKCARD)] = result
+    }
+
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
@@ -131,7 +149,6 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         if (requestCode === REQUEST_CODE_CAMERA && resultCode === Activity.RESULT_OK) {
             if (data != null) {
                 val contentType: String = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE)
-
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT == contentType) {
                         val filePath = getSaveFile(activity.applicationContext, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT).absolutePath
@@ -145,7 +162,39 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                 }
             }
         }
+
+        // 识别成功回调，银行卡识别
+
+        // 识别成功回调，银行卡识别
+        if (requestCode === REQUEST_CODE_BANKCARD && resultCode === Activity.RESULT_OK) {
+            RecognizeService.recBankCard(activity, getSaveFile(activity, java.lang.String.valueOf(REQUEST_CODE_BANKCARD)).absolutePath,
+                    object : RecognizeService.ServiceListener {
+                        override fun onResult(result: String?) {
+                            val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
+                            result1?.success(getMap(result))
+                        }
+                    })
+        }
         return true
+    }
+    fun getMap(jsonString: String?): HashMap<String, Any>? {
+        val jsonObject: JSONObject
+        try {
+            jsonObject = JSONObject(jsonString)
+            val keyIter: Iterator<String> = jsonObject.keys()
+            var key: String
+            var value: Any
+            var valueMap = HashMap<String, Any>()
+            while (keyIter.hasNext()) {
+                key = keyIter.next()
+                value = jsonObject[key] as Any
+                valueMap[key] = value
+            }
+            return valueMap
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun recIDCard(idCardSide: String, filePath: String, contentType: String) {

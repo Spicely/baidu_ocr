@@ -1,6 +1,6 @@
 part of baidu_ocr;
 
-class CardBack {
+class IdCardBackOcr {
   /// 有效日期
   final String signDate;
 
@@ -13,20 +13,20 @@ class CardBack {
   /// 文件路径
   final String filePath;
 
-  CardBack(
+  IdCardBackOcr(
     this.signDate,
     this.expiryDate,
     this.issueAuthority,
     this.filePath,
   );
 
-  factory CardBack.fromJson(Map<dynamic, dynamic> json) => _$CardBackFromJson(json);
+  factory IdCardBackOcr.fromJson(Map<dynamic, dynamic> json) => _$IdCardBackOcrFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CardBackToJson(this);
+  Map<String, dynamic> toJson() => _$IdCardBackOcrToJson(this);
 }
 
-CardBack _$CardBackFromJson(Map<String, dynamic> json) {
-  return CardBack(
+IdCardBackOcr _$IdCardBackOcrFromJson(Map<String, dynamic> json) {
+  return IdCardBackOcr(
     json['signDate'] as String,
     json['expiryDate'] as String,
     json['issueAuthority'] as String,
@@ -34,7 +34,7 @@ CardBack _$CardBackFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$CardBackToJson(CardBack instance) => <String, dynamic>{
+Map<String, dynamic> _$IdCardBackOcrToJson(IdCardBackOcr instance) => <String, dynamic>{
       'signDate': instance.signDate,
       'expiryDate': instance.expiryDate,
       'issueAuthority': instance.issueAuthority,

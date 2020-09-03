@@ -12,14 +12,20 @@ class BaiduOcr {
   }
 
   /// 身份证正面拍照识别
-  static Future<CardFront> idcardOCROnlineFront() async {
+  static Future<IdCardFrontOcr> idcardOCROnlineFront() async {
     final dynamic res = await _channel.invokeMethod('idcardOCROnlineFront');
-    return CardFront.fromJson(Map<String, dynamic>.from(res));
+    return IdCardFrontOcr.fromJson(Map<String, dynamic>.from(res));
   }
 
   /// 身份证反面拍照识别
-  static Future<CardBack> idcardOCROnlineBack() async {
+  static Future<IdCardBackOcr> idcardOCROnlineBack() async {
     final dynamic res = await _channel.invokeMethod('idcardOCROnlineBack');
-    return CardBack.fromJson(Map<String, dynamic>.from(res));
+    return IdCardBackOcr.fromJson(Map<String, dynamic>.from(res));
+  }
+
+  /// 银行卡正面拍照识别
+  static Future<BankCardOcr> bankCardOCROnline() async {
+    final dynamic res = await _channel.invokeMethod('bankCardOCROnline');
+    return BankCardOcr.fromJson(Map<String, dynamic>.from(res));
   }
 }

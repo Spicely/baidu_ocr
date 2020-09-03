@@ -51,17 +51,24 @@ class _MyAppState extends State<MyApp> {
           children: [
             RaisedButton(
               onPressed: () async {
-                CardFront data = await BaiduOcr.idcardOCROnlineFront();
+                IdCardFrontOcr data = await BaiduOcr.idcardOCROnlineFront();
                 print(data.toJson());
               },
               child: Text('身份证识别'),
             ),
             RaisedButton(
               onPressed: () async {
-                CardBack data = await BaiduOcr.idcardOCROnlineBack();
+                IdCardBackOcr data = await BaiduOcr.idcardOCROnlineBack();
                 print(data.toJson());
               },
               child: Text('身份证背面识别'),
+            ),
+            RaisedButton(
+              onPressed: () async {
+                BankCardOcr data = await BaiduOcr.bankCardOCROnline();
+                print(data.toJson());
+              },
+              child: Text('银行卡识别'),
             ),
           ],
         ),
