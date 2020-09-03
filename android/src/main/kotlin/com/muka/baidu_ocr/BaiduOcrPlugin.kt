@@ -107,7 +107,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
     /// 身份证正面拍照识别
     private fun idcardOCROnlineFrontCall(call: MethodCall, result: Result) {
         val intent = Intent(activity, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity).absolutePath)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT).absolutePath)
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT)
         activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_FRONT] = result
@@ -115,8 +115,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
 
     private fun idcardOCROnlineBackCall(call: MethodCall, result: Result) {
         val intent = Intent(activity, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                getSaveFile(activity).absolutePath)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, CameraActivity.CONTENT_TYPE_ID_CARD_BACK).absolutePath)
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_BACK)
         activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_BACK] = result
@@ -132,12 +131,14 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         if (requestCode === REQUEST_CODE_CAMERA && resultCode === Activity.RESULT_OK) {
             if (data != null) {
                 val contentType: String = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE)
-                val filePath = getSaveFile(activity.applicationContext).absolutePath
+
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT == contentType) {
+                        val filePath = getSaveFile(activity.applicationContext, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT).absolutePath
                         // 身份证正面
                         recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath, contentType)
                     } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK == contentType) {
+                        val filePath = getSaveFile(activity.applicationContext, CameraActivity.CONTENT_TYPE_ID_CARD_BACK).absolutePath
                         // 身份证反面
                         recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath, contentType)
                     }
@@ -170,7 +171,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                     data["signDate"] = result.signDate?.toString()
                     data["expiryDate"] = result.expiryDate?.toString()
                     data["issueAuthority"] = result.issueAuthority?.toString()
-                    data["filePath"] = param.imageFile.path
+                    data["filePath"] = filePath
                     result1?.success(data)
                 }
             }
