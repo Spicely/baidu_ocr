@@ -1,0 +1,22 @@
+PODS:
+  - baidu_ocr (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - baidu_ocr (from `.symlinks/plugins/baidu_ocr/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  baidu_ocr:
+    :path: ".symlinks/plugins/baidu_ocr/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  baidu_ocr: 578392c8ebacda9993cdf7e4a74e3da04f72d368
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
+
+COCOAPODS: 1.10.0.beta.1
