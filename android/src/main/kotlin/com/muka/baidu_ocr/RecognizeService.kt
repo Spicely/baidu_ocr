@@ -5,7 +5,10 @@ import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
 import com.baidu.ocr.sdk.exception.OCRError
 import com.baidu.ocr.sdk.model.*
+import org.json.JSONObject
 import java.io.File
+import java.util.*
+import kotlin.collections.HashMap
 
 /*
  * Copyright (C) 2017 Baidu, Inc. All Rights Reserved.
@@ -154,13 +157,32 @@ object RecognizeService {
                 data["bankCardType"] = result.bankCardType.name?.toString()
                 data["bankName"] = result.bankName?.toString()
                 data["filePath"] = filePath
-                listener.onResult(data.toString())
+                listener.onResult(getMapToString(data))
             }
 
             override fun onError(error: OCRError) {
                 listener.onResult(error.message)
             }
         })
+    }
+    fun getMapToString(map: Map<String, String?>): String? {
+        val keySet = map.keys
+        //将set集合转换为数组
+        val keyArray = keySet.toTypedArray()
+        //给数组排序(升序)
+        Arrays.sort(keyArray)
+        //因为String拼接效率会很低的，所以转用StringBuilder。博主会在这篇博文发后不久，会更新一篇String与StringBuilder开发时的抉择的博文。
+        val sb = java.lang.StringBuilder()
+        for (i in keyArray.indices) {
+            // 参数值为空，则不参与签名 这个方法trim()是去空格
+            if (map[keyArray[i]]!!.trim { it <= ' ' }.isNotEmpty()) {
+                sb.append(keyArray[i]).append("=").append(map[keyArray[i]]!!.trim { it <= ' ' })
+            }
+            if (i != keyArray.size - 1) {
+                sb.append("&")
+            }
+        }
+        return sb.toString()
     }
 
     fun recVehicleLicense(ctx: Context?, filePath: String?, listener: ServiceListener) {

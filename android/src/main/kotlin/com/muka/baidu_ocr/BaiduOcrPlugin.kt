@@ -3,7 +3,6 @@ package com.muka.baidu_ocr
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.NonNull
 import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
@@ -22,8 +21,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.File
 
 
@@ -171,30 +168,35 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                     object : RecognizeService.ServiceListener {
                         override fun onResult(result: String?) {
                             val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
-                            result1?.success(getMap(result))
+                            result1?.success(getStringToMap(result))
                         }
                     })
         }
         return true
     }
-    fun getMap(jsonString: String?): HashMap<String, Any>? {
-        val jsonObject: JSONObject
-        try {
-            jsonObject = JSONObject(jsonString)
-            val keyIter: Iterator<String> = jsonObject.keys()
-            var key: String
-            var value: Any
-            var valueMap = HashMap<String, Any>()
-            while (keyIter.hasNext()) {
-                key = keyIter.next()
-                value = jsonObject[key] as Any
-                valueMap[key] = value
-            }
-            return valueMap
-        } catch (e: JSONException) {
-            e.printStackTrace()
+    fun getStringToMap(str: String?): Map<String?, String?>? {
+        //感谢bojueyou指出的问题
+        //判断str是否有值
+        if (null == str || "" == str) {
+            return null
         }
-        return null
+        //根据&截取
+        val strings = str.split("&".toRegex()).toTypedArray()
+        //设置HashMap长度
+        var mapLength = strings.size
+        //判断hashMap的长度是否是2的幂。
+        if (strings.size % 2 != 0) {
+            mapLength += 1
+        }
+        val map: HashMap<String?, String?> = HashMap()
+        //循环加入map集合
+        for (i in strings.indices) {
+            //截取一组字符串
+            val strArray = strings[i].split("=".toRegex()).toTypedArray()
+            //strArray[0]为KEY  strArray[1]为值
+            map[strArray[0]] = strArray[1]
+        }
+        return map
     }
 
     private fun recIDCard(idCardSide: String, filePath: String, contentType: String) {
