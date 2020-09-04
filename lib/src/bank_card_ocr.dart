@@ -14,10 +14,10 @@ class BankCardOcr {
   final String filePath;
 
   BankCardOcr(
-    this.filePath,
-    this.bankCardNumber,
-    this.bankCardType,
     this.bankName,
+    this.bankCardType,
+    this.bankCardNumber,
+    this.filePath,
   );
 
   factory BankCardOcr.fromJson(Map<dynamic, dynamic> json) => _$BankCardOcrFromJson(json);
