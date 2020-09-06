@@ -8,9 +8,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="baidu_ocr_example"
-        android:icon="@mipmap/ic_launcher"
-        android:required="false"
-        android:usesCleartextTraffic="true">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

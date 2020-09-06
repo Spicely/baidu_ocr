@@ -1,6 +1,6 @@
 framework module IdcardQuality {
-  // umbrella header "IdcardQuality.h"
+  umbrella header "IdcardQuality.h"
 
   export *
-  // module * { export * }
+  module * { export * }
 }

@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await BaiduOcr.init('', ''), '42');
+    expect(await BaiduOcr.platformVersion, '42');
   });
 }
