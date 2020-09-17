@@ -23,7 +23,7 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  baidu_ocr: db7dacb4533a0b86c8ad1b4225b2c7baf1c3cc3e
+  baidu_ocr: ad51e70fa64f8d57644db8720c95ff20cff3fdc1
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
 
 PODFILE CHECKSUM: b1f7a399522c118a74b177b13c01eca692aa7e6d
