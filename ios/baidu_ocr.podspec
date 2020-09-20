@@ -5,30 +5,30 @@
 Pod::Spec.new do |s|
   s.name             = 'baidu_ocr'
   s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.summary          = '百度OCR插件'
   s.description      = <<-DESC
-A new flutter plugin project.
+百度OCR插件
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'http://muka.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Spicely' => 'Spicely@outloout.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'Classes/**/*', 'Classes/AipBase.framework', 'Classes/AipOcrSdk.framework', 'Classes/IdcardQuality.framework' 
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
 
   s.ios.deployment_target = '8.0'
   s.subspec 'AipBase' do |b|
-      b.vendored_frameworks ='Classes/AipBase.framework'
+      b.ios.vendored_libraries ='Classes/AipBase.framework'
   end
 
   s.subspec 'AipOcrSdk' do |sdk|
-    sdk.vendored_frameworks ='Classes/AipOcrSdk.framework'
+    sdk.ios.vendored_libraries ='Classes/AipOcrSdk.framework'
   end
 
   s.subspec 'IdcardQuality' do |i|
-      i.vendored_frameworks ='Classes/IdcardQuality.framework'
+      i.ios.vendored_libraries ='Classes/IdcardQuality.framework'
   end
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
