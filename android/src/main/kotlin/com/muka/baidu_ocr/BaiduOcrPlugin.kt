@@ -8,9 +8,7 @@ import androidx.annotation.NonNull
 import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
 import com.baidu.ocr.sdk.exception.OCRError
-import com.baidu.ocr.sdk.model.AccessToken
-import com.baidu.ocr.sdk.model.IDCardParams
-import com.baidu.ocr.sdk.model.IDCardResult
+import com.baidu.ocr.sdk.model.*
 import com.baidu.ocr.ui.camera.CameraActivity
 import com.muka.baidu_ocr.FileUtil.getSaveFile
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -168,38 +166,26 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
 
         // 识别成功回调，银行卡识别
         if (requestCode === REQUEST_CODE_BANKCARD && resultCode === Activity.RESULT_OK) {
-            RecognizeService.recBankCard(activity, bankFilePath,
-                    object : RecognizeService.ServiceListener {
-                        override fun onResult(result: String?) {
-                            val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
-                            result1?.success(getStringToMap(result))
-                        }
-                    })
+            val param = BankCardParams()
+            param.imageFile = File(bankFilePath)
+            OCR.getInstance(activity).recognizeBankCard(param, object : OnResultListener<BankCardResult> {
+                override fun onResult(result: BankCardResult) {
+                    var data = HashMap<String, String?>()
+                    data["bankCardNumber"] = result.bankCardNumber?.toString()
+                    data["bankCardType"] = result.bankCardType.name?.toString()
+                    data["bankName"] = result.bankName?.toString()
+                    data["filePath"] = bankFilePath
+                    val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
+                    result1?.success(data)
+                }
+
+                override fun onError(error: OCRError) {
+                    val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
+                    result1?.success(null)
+                }
+            })
         }
         return true
-    }
-    fun getStringToMap(str: String?): Map<String?, String?>? {
-        //判断str是否有值
-        if (null == str || "" == str || "[216631] recognize bank card error" == str) {
-            return null
-        }
-        //根据&截取
-        val strings = str.split("&".toRegex()).toTypedArray()
-        //设置HashMap长度
-        var mapLength = strings.size
-        //判断hashMap的长度是否是2的幂。
-        if (strings.size % 2 != 0) {
-            mapLength += 1
-        }
-        val map: HashMap<String?, String?> = HashMap()
-        //循环加入map集合
-        for (i in strings.indices) {
-            //截取一组字符串
-            val strArray = strings[i].split("=".toRegex()).toTypedArray()
-            //strArray[0]为KEY  strArray[1]为值
-            map[strArray[0]] = strArray[1]
-        }
-        return map
     }
 
     private fun recIDCard(idCardSide: String, filePath: String, contentType: String) {

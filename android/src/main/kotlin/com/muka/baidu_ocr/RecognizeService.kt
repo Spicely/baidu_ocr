@@ -146,24 +146,6 @@ object RecognizeService {
         })
     }
 
-    fun recBankCard(ctx: Context?, filePath: String?, listener: ServiceListener) {
-        val param = BankCardParams()
-        param.imageFile = File(filePath)
-        OCR.getInstance(ctx).recognizeBankCard(param, object : OnResultListener<BankCardResult> {
-            override fun onResult(result: BankCardResult) {
-                var data = HashMap<String, String?>()
-                data["bankCardNumber"] = result.bankCardNumber?.toString()
-                data["bankCardType"] = result.bankCardType.name?.toString()
-                data["bankName"] = result.bankName?.toString()
-                data["filePath"] = filePath
-                listener.onResult(getMapToString(data))
-            }
-
-            override fun onError(error: OCRError) {
-                listener.onResult(error.message)
-            }
-        })
-    }
     fun getMapToString(map: Map<String, String?>): String? {
         val keySet = map.keys
         //将set集合转换为数组
