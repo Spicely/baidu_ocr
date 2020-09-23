@@ -3,6 +3,7 @@ package com.muka.baidu_ocr
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.NonNull
 import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
@@ -35,6 +36,8 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
     private lateinit var activity: Activity
 
     private var resultMap = HashMap<String, Result>()
+
+    private  var bankFilePath = ""
 
     //身份证
     private val REQUEST_CODE_CAMERA = 102
@@ -113,7 +116,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
     /// 身份证正面拍照识别
     private fun idcardOCROnlineFrontCall(call: MethodCall, result: Result) {
         val intent = Intent(activity, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT).absolutePath)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity).absolutePath)
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT)
         activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_FRONT] = result
@@ -121,7 +124,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
 
     private fun idcardOCROnlineBackCall(call: MethodCall, result: Result) {
         val intent = Intent(activity, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, CameraActivity.CONTENT_TYPE_ID_CARD_BACK).absolutePath)
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity).absolutePath)
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_BACK)
         activity.startActivityForResult(intent, REQUEST_CODE_CAMERA)
         resultMap[CameraActivity.CONTENT_TYPE_ID_CARD_BACK] = result
@@ -130,7 +133,8 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
     /// 银行卡识别
     private fun bankCardOCROnlineCall(call: MethodCall, result: Result) {
         val intent = Intent(activity, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, getSaveFile(activity, java.lang.String.valueOf(REQUEST_CODE_BANKCARD)).absolutePath)
+        bankFilePath = getSaveFile(activity).absolutePath
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, bankFilePath)
         intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_BANK_CARD)
         activity.startActivityForResult(intent, REQUEST_CODE_BANKCARD)
         resultMap[java.lang.String.valueOf(REQUEST_CODE_BANKCARD)] = result
@@ -148,11 +152,11 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                 val contentType: String = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE)
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT == contentType) {
-                        val filePath = getSaveFile(activity.applicationContext, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT).absolutePath
+                        val filePath = getSaveFile(activity.applicationContext).absolutePath
                         // 身份证正面
                         recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath, contentType)
                     } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK == contentType) {
-                        val filePath = getSaveFile(activity.applicationContext, CameraActivity.CONTENT_TYPE_ID_CARD_BACK).absolutePath
+                        val filePath = getSaveFile(activity.applicationContext).absolutePath
                         // 身份证反面
                         recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath, contentType)
                     }
@@ -164,7 +168,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
 
         // 识别成功回调，银行卡识别
         if (requestCode === REQUEST_CODE_BANKCARD && resultCode === Activity.RESULT_OK) {
-            RecognizeService.recBankCard(activity, getSaveFile(activity, java.lang.String.valueOf(REQUEST_CODE_BANKCARD)).absolutePath,
+            RecognizeService.recBankCard(activity, bankFilePath,
                     object : RecognizeService.ServiceListener {
                         override fun onResult(result: String?) {
                             val result1 = resultMap[REQUEST_CODE_BANKCARD.toString()]
@@ -175,9 +179,8 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         return true
     }
     fun getStringToMap(str: String?): Map<String?, String?>? {
-        //感谢bojueyou指出的问题
         //判断str是否有值
-        if (null == str || "" == str) {
+        if (null == str || "" == str || "[216631] recognize bank card error" == str) {
             return null
         }
         //根据&截取

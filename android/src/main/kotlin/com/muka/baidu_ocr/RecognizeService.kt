@@ -5,7 +5,6 @@ import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
 import com.baidu.ocr.sdk.exception.OCRError
 import com.baidu.ocr.sdk.model.*
-import org.json.JSONObject
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
