@@ -1,15 +1,21 @@
 # baidu_ocr
 
-A new flutter plugin project.
+百度OCR插件
 
-## Getting Started
+## Android
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+在`AndroidManifest.xml`添加如下代码
+`
+ <meta-data android:name="com.amap.api.v2.apikey" android:value="你的key" />
+`
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## IOS
+
+在`Info.plist`添加如下代码
+
+```
+    <key>NSCameraUsageDescription</key>
+    <string>App需要您的同意,才能唤起摄像头</string>
+```
+
 

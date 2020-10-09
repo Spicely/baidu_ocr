@@ -19,18 +19,7 @@ Pod::Spec.new do |s|
   s.platform = :ios, '8.0'
 
   s.ios.deployment_target = '8.0'
-  s.subspec 'AipBase' do |b|
-      b.ios.vendored_libraries ='Classes/AipBase.framework'
-  end
-
-  s.subspec 'AipOcrSdk' do |sdk|
-    sdk.ios.vendored_libraries ='Classes/AipOcrSdk.framework'
-  end
-
-  s.subspec 'IdcardQuality' do |i|
-      i.ios.vendored_libraries ='Classes/IdcardQuality.framework'
-  end
-
+  s.vendored_frameworks = ['Classes/AipOcrSdk.framework', 'Classes/AipBase.framework', 'Classes/IdcardQuality.framework']
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
   # s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
