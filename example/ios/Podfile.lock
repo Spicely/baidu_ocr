@@ -1,14 +1,5 @@
 PODS:
   - baidu_ocr (0.0.1):
-    - baidu_ocr/AipBase (= 0.0.1)
-    - baidu_ocr/AipOcrSdk (= 0.0.1)
-    - baidu_ocr/IdcardQuality (= 0.0.1)
-    - Flutter
-  - baidu_ocr/AipBase (0.0.1):
-    - Flutter
-  - baidu_ocr/AipOcrSdk (0.0.1):
-    - Flutter
-  - baidu_ocr/IdcardQuality (0.0.1):
     - Flutter
   - Flutter (1.0.0)
 
@@ -23,9 +14,9 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  baidu_ocr: 79f8a8ddfb78d3099674fade9e84b6ba6556fa7b
+  baidu_ocr: 2c4f41032d8622444a4ac75f2bb045d2f2cfaf68
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
 
-PODFILE CHECKSUM: b1f7a399522c118a74b177b13c01eca692aa7e6d
+PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 
 COCOAPODS: 1.10.0.beta.1
