@@ -258,6 +258,9 @@
                 [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
             });
             NSLog(@"身份证正面拍照识别:%@\n",aipOcrResult);
+//            NSDictionary *data = @{
+//                @"":aipOcrResult.,
+//            };
             result(aipOcrResult);
         }
         failHandler:^(NSError *error){
