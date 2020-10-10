@@ -40,13 +40,12 @@
     else if ([@"idcardOCROnlineFront" isEqualToString:call.method]) {
         //身份证正面拍照识别
         [self idcardOCROnlineFrontCall:call result:result];
-        
     }
-    //    else if ([@"idcardOCROnlineBack" isEqualToString:call.method]) {
-    //        //身份证反面拍照识别
-    //        [self idcardOCROnlineBackCall:call result:result];
-    //
-    //    }else if ([@"localIdcardOCROnlineFront" isEqualToString:call.method]) {
+    else if ([@"idcardOCROnlineBack" isEqualToString:call.method]) {
+        //身份证反面拍照识别
+        [self idcardOCROnlineBackCall:call result:result];
+    }
+//    else if ([@"localIdcardOCROnlineFront" isEqualToString:call.method]) {
     //        //身份证正面(嵌入式质量控制+云端识别)
     //        [self localIdcardOCROnlineFrontCall:call result:result];
     //
@@ -54,11 +53,12 @@
     //        //身份证反面(嵌入式质量控制+云端识别)
     //        [self localIdcardOCROnlineBackCall:call result:result];
     //
-    //    }else if ([@"bankCardOCROnline" isEqualToString:call.method]) {
-    //        //银行卡正面拍照识别
-    //        [self bankCardOCROnlineCall:call result:result];
-    //
-    //    }else if ([@"drivingLicenseOCR" isEqualToString:call.method]) {
+    //    }
+    else if ([@"bankCardOCROnline" isEqualToString:call.method]) {
+        //银行卡正面拍照识别
+        [self bankCardOCROnlineCall:call result:result];
+    }
+//        else if ([@"drivingLicenseOCR" isEqualToString:call.method]) {
     //        //驾驶证识别
     //        [self drivingLicenseOCRCall:call result:result];
     //
@@ -248,62 +248,118 @@
 //    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
 //
 //}
-//
+#pragma mark - 获取名称字段
+- (NSString *)getLabelField:(NSString *)label {
+    if ([label  isEqual: @"姓名"]) {
+        return @"name";
+    } else if ([label  isEqual: @"性别"]) {
+        return @"gender";
+    }else if ([label  isEqual: @"民族"]) {
+        return @"ethnic";
+    }else if ([label  isEqual: @"民族"]) {
+        return @"gender";
+    }else if ([label  isEqual: @"出生"]) {
+        return @"birthday";
+    }else if ([label  isEqual: @"住址"]) {
+        return @"address";
+    }else if ([label  isEqual: @"公民身份号码"]) {
+        return @"number";
+    }else if ([label  isEqual: @"签发机关"]) {
+        return @"issueAuthority";
+    }else if ([label  isEqual: @"签发日期"]) {
+        return @"signDate";
+    }else if ([label  isEqual: @"失效日期"]) {
+        return @"expiryDate";
+    } else {
+        return @"";
+    }
+}
 #pragma mark - 身份证正面拍照识别
 - (void)idcardOCROnlineFrontCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     UIViewController * vc = [AipCaptureCardVC ViewControllerWithCardType:CardTypeIdCardFont andImageHandler:^(UIImage *image) {
-        [[AipOcrService shardService] detectIdCardFrontFromImage:image withOptions:nil 
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,  NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString* path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat:@"%f%@",[[NSDate date] timeIntervalSince1970] * 1000,@".png"] ];
+        NSData* data = UIImagePNGRepresentation(image);
+        [data writeToFile:path atomically:YES];
+        [[AipOcrService shardService] detectIdCardFrontFromImage:image withOptions:nil
         successHandler:^(id aipOcrResult){
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
             });
-            NSLog(@"身份证正面拍照识别:%@\n",aipOcrResult);
-//            NSDictionary *data = @{
-//                @"":aipOcrResult.,
-//            };
-            result(aipOcrResult);
+            NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:0];
+            NSMutableString *message = [NSMutableString string];
+            if(aipOcrResult[@"words_result"]){
+                if([aipOcrResult[@"words_result"] isKindOfClass:[NSDictionary class]]){
+                    [aipOcrResult[@"words_result"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                        if([obj isKindOfClass:[NSDictionary class]] && [obj objectForKey:@"words"]){
+                            [data setObject:obj[@"words"] forKey:[self getLabelField:key]];
+                            [message appendFormat:@"%@: %@\n", key, obj[@"words"]];
+                        }else{
+                            [data setObject:obj forKey:[self getLabelField:key]];
+                            [message appendFormat:@"%@: %@\n", key, obj];
+                        }
+                    }];
+                }
+            }
+            [data setObject:path forKey:@"filePath"];
+            NSLog(@"身份证正面拍照识别:%@\n",message);
+            result(data);
         }
-        failHandler:^(NSError *error){
+       failHandler:^(NSError *error){
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
             });
-            NSLog(@"身份证正面拍照识别:%@\n",error);
             result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld",(long)error.code] message:error.description details:nil] );
         }];
     }];
     [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
 }
-//#pragma mark - 身份证反面拍照识别
-//- (void)idcardOCROnlineBackCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-//
-////    result([FlutterAipocrPlugin dictionaryToJson:@{@"asdf":@"12312"}]);
-//
-//    UIViewController * vc =
-//    [AipCaptureCardVC ViewControllerWithCardType:CardTypeIdCardBack
-//                                 andImageHandler:^(UIImage *image)
-//     {
-//
-//         [[AipOcrService shardService] detectIdCardBackFromImage:image
-//                                                     withOptions:nil
-//                                                  successHandler:^(id aipOcrResult)
-//          {
-//
-//              NSLog(@"身份证反面拍照识别:%@\n",aipOcrResult);
-//              result(aipOcrResult);
-//              [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES
-//                                                                                                   completion:nil];
-//          }
-//                                                     failHandler:^(NSError *error)
-//          {
-//              result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld",(long)error.code]
-//                                         message:error.description
-//                                         details:nil] );
-//          }];
-//     }];
-//
-//    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
-//
-//}
+#pragma mark - 身份证反面拍照识别
+- (void)idcardOCROnlineBackCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+
+    UIViewController * vc = [AipCaptureCardVC ViewControllerWithCardType:CardTypeIdCardBack andImageHandler:^(UIImage *image) {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,  NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString* path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat:@"%f%@",[[NSDate date] timeIntervalSince1970] * 1000,@".png"] ];
+        NSData* data = UIImagePNGRepresentation(image);
+        [data writeToFile:path atomically:YES];
+        [[AipOcrService shardService] detectIdCardBackFromImage:image withOptions:nil
+         successHandler:^(id aipOcrResult)
+          {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
+             });
+             NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:0];
+             NSMutableString *message = [NSMutableString string];
+             if(aipOcrResult[@"words_result"]){
+                 if([aipOcrResult[@"words_result"] isKindOfClass:[NSDictionary class]]){
+                     [aipOcrResult[@"words_result"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                         if([obj isKindOfClass:[NSDictionary class]] && [obj objectForKey:@"words"]){
+                             [data setObject:obj[@"words"] forKey:[self getLabelField:key]];
+                             [message appendFormat:@"%@: %@\n", key, obj[@"words"]];
+                         }else{
+                             [data setObject:obj forKey:[self getLabelField:key]];
+                             [message appendFormat:@"%@: %@\n", key, obj];
+                         }
+                     }];
+                 }
+             }
+             [data setObject:path forKey:@"filePath"];
+             NSLog(@"身份证反面拍照识别:%@\n",message);
+             result(data);
+          }
+        failHandler:^(NSError *error) {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
+             });
+             result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld",(long)error.code] message:error.description details:nil] );
+          }];
+     }];
+
+    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
+
+}
 //#pragma mark - 身份证正面(嵌入式质量控制+云端识别)
 //- (void)localIdcardOCROnlineFrontCall:(FlutterMethodCall*)call result:(FlutterResult)result {
 //
@@ -354,30 +410,36 @@
 //    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
 //
 //}
-//#pragma mark - 银行卡正面拍照识别
-//- (void)bankCardOCROnlineCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-//
-//    UIViewController * vc =
-//    [AipCaptureCardVC ViewControllerWithCardType:CardTypeBankCard
-//                                 andImageHandler:^(UIImage *image) {
-//
-//                                     [[AipOcrService shardService] detectBankCardFromImage:image
-//                                                                            successHandler:^(id aipOcrResult){
-//
-//                                                                                NSLog(@"银行卡正面拍照识别:%@\n",aipOcrResult);
-//                                                                                result(aipOcrResult);
-//                                                                                [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
-//                                                                            }
-//                                                                               failHandler:^(NSError *error){
-//                                                                                   result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld",(long)error.code]
-//                                                                                                              message:error.description
-//                                                                                                              details:nil] );
-//                                                                               }];
-//                                 }];
-//
-//    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
-//
-//}
+#pragma mark - 银行卡正面拍照识别
+- (void)bankCardOCROnlineCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+
+    UIViewController * vc =
+    [AipCaptureCardVC ViewControllerWithCardType:CardTypeBankCard andImageHandler:^(UIImage *image) {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,  NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString* path = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat:@"%f%@",[[NSDate date] timeIntervalSince1970] * 1000,@".png"] ];
+    NSData* data = UIImagePNGRepresentation(image);
+    [data writeToFile:path atomically:YES];
+    [[AipOcrService shardService] detectBankCardFromImage:image
+       successHandler:^(id aipOcrResult){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
+            });
+            NSDictionary *data = @{@"bankName": aipOcrResult[@"result"][@"bank_name"],@"bankCardType": [NSString stringWithFormat:@"%@",aipOcrResult[@"result"][@"bank_card_type"]],@"bankCardNumber": aipOcrResult[@"result"][@"bank_card_number"],@"filePath": path};
+            NSLog(@"银行卡正面拍照识别:%@\n",data);
+            result(data);
+     }
+       failHandler:^(NSError *error){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[[UIApplication sharedApplication].keyWindow rootViewController] dismissViewControllerAnimated:YES completion:nil];
+            });
+            result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld",(long)error.code] message:error.description details:nil] );
+       }];
+     }];
+
+    [[[UIApplication sharedApplication].keyWindow rootViewController] presentViewController:vc animated:YES completion:nil];
+
+}
 //#pragma mark - 驾驶证识别
 //- (void)drivingLicenseOCRCall:(FlutterMethodCall*)call result:(FlutterResult)result {
 //
