@@ -2,7 +2,7 @@
 
 百度OCR插件
 
-`需要去[百度AI](https://console.bce.baidu.com/ai/?_=1603093563631&fromai=1#/ai/ocr/overview/index "百度AI")注册`
+需要去 [百度AI](https://console.bce.baidu.com/ai/?_=1603093563631&fromai=1#/ai/ocr/overview/index) 注册
 
 ## Android
 
