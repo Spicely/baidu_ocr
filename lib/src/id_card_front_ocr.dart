@@ -22,7 +22,7 @@ class IdCardFrontOcr {
   /// 文件路径
   final String filePath;
 
-  IdCardFrontOcr({
+  IdCardFrontOcr(
     this.name,
     this.gender,
     this.ethnic,
@@ -30,22 +30,22 @@ class IdCardFrontOcr {
     this.address,
     this.number,
     this.filePath,
-  });
+  );
 
-  factory IdCardFrontOcr.fromJson(Map<dynamic, dynamic> json) => _$IdCardFrontOcrFromJson(json);
+  factory IdCardFrontOcr.fromJson(Map<String, dynamic> json) => _$IdCardFrontOcrFromJson(json);
 
   Map<String, dynamic> toJson() => _$IdCardFrontOcrToJson(this);
 }
 
 IdCardFrontOcr _$IdCardFrontOcrFromJson(Map<String, dynamic> json) {
   return IdCardFrontOcr(
-    name: json['name'] as String,
-    gender: json['gender'] as String,
-    ethnic: json['ethnic'] as String,
-    birthday: json['birthday'] as String,
-    address: json['address'] as String,
-    number: json['number'] as String,
-    filePath: json['filePath'] as String,
+    json['name'] as String,
+    json['gender'] as String,
+    json['ethnic'] as String,
+    json['birthday'] as String,
+    json['address'] as String,
+    json['number'] as String,
+    json['filePath'] as String,
   );
 }
 

@@ -6,8 +6,12 @@ import java.util.*
 
 
 object FileUtil {
-    fun getSaveFile(context: Context): File {
-        val date = Date(); // 当前时间
-        return File(context.filesDir, "pic_${date.time}.jpg")
+    private val map = HashMap<String, Any>()
+    fun getSaveFile(context: Context, status: Boolean, field: String): File {
+        if (status) {
+            val date = Date(); // 当前时间
+            map[field] = date.time;
+        }
+        return File(context.filesDir, "pic_${map[field]}.jpg")
     }
 }

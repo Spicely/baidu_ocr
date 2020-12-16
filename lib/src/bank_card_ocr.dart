@@ -20,7 +20,7 @@ class BankCardOcr {
     this.filePath,
   );
 
-  factory BankCardOcr.fromJson(Map<dynamic, dynamic> json) => _$BankCardOcrFromJson(json);
+  factory BankCardOcr.fromJson(Map<String, dynamic> json) => _$BankCardOcrFromJson(json);
 
   Map<String, dynamic> toJson() => _$BankCardOcrToJson(this);
 }

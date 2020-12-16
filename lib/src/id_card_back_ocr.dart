@@ -20,7 +20,7 @@ class IdCardBackOcr {
     this.filePath,
   );
 
-  factory IdCardBackOcr.fromJson(Map<dynamic, dynamic> json) => _$IdCardBackOcrFromJson(json);
+  factory IdCardBackOcr.fromJson(Map<String, dynamic> json) => _$IdCardBackOcrFromJson(json);
 
   Map<String, dynamic> toJson() => _$IdCardBackOcrToJson(this);
 }
