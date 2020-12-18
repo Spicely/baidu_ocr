@@ -147,7 +147,7 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
         // 身份证
         if (requestCode === REQUEST_CODE_CAMERA && resultCode === Activity.RESULT_OK) {
             if (data != null) {
-                val contentType: String = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE)
+                val contentType: String? = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE)
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT == contentType) {
                         val filePath = getSaveFile(activity.applicationContext, false,"idCardOCROnlineFrontCall").absolutePath
@@ -161,9 +161,6 @@ public class BaiduOcrPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, P
                 }
             }
         }
-
-        // 识别成功回调，银行卡识别
-
         // 识别成功回调，银行卡识别
         if (requestCode === REQUEST_CODE_BANKCARD && resultCode === Activity.RESULT_OK) {
             val param = BankCardParams()
