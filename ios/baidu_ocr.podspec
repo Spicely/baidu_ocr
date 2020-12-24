@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'baidu_ocr'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = '百度OCR插件'
   s.description      = <<-DESC
 百度OCR插件
@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
+  s.swift_version = '5.0'
 
   s.ios.deployment_target = '8.0'
   s.vendored_frameworks = ['Classes/AipOcrSdk.framework', 'Classes/AipBase.framework', 'Classes/IdcardQuality.framework']
