@@ -2,25 +2,25 @@ part of baidu_ocr;
 
 class IdCardFrontOcr {
   /// 姓名
-  final String name;
+  final String? name;
 
   /// 性别
-  final String gender;
+  final String? gender;
 
   /// 民族
-  final String ethnic;
+  final String? ethnic;
 
   /// 出身日期
-  final String birthday;
+  final String? birthday;
 
   /// 户籍
-  final String address;
+  final String? address;
 
   /// 身份证号
-  final String number;
+  final String? number;
 
   /// 文件路径
-  final String filePath;
+  final String? filePath;
 
   IdCardFrontOcr(
     this.name,
@@ -39,13 +39,13 @@ class IdCardFrontOcr {
 
 IdCardFrontOcr _$IdCardFrontOcrFromJson(Map<String, dynamic> json) {
   return IdCardFrontOcr(
-    json['name'] as String,
-    json['gender'] as String,
-    json['ethnic'] as String,
-    json['birthday'] as String,
-    json['address'] as String,
-    json['number'] as String,
-    json['filePath'] as String,
+    json['name'] as String?,
+    json['gender'] as String?,
+    json['ethnic'] as String?,
+    json['birthday'] as String?,
+    json['address'] as String?,
+    json['number'] as String?,
+    json['filePath'] as String?,
   );
 }
 
