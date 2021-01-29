@@ -3,8 +3,8 @@ part of baidu_ocr;
 class BaiduOcr {
   static const MethodChannel _channel = const MethodChannel('com.muka.baidu_ocr');
 
-  static Future<bool?> init(String appKey, String secretKey) async {
-    bool? res = await _channel.invokeMethod('init', {
+  static Future<bool> init(String appKey, String secretKey) async {
+    bool res = await _channel.invokeMethod('init', {
       'appKey': appKey,
       'secretKey': secretKey,
     });

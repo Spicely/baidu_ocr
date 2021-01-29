@@ -2,16 +2,16 @@ part of baidu_ocr;
 
 class IdCardBackOcr {
   /// 有效日期
-  final String? signDate;
+  final String signDate;
 
   /// 失效日期
-  final String? expiryDate;
+  final String expiryDate;
 
   /// 发行
-  final String? issueAuthority;
+  final String issueAuthority;
 
   /// 文件路径
-  final String? filePath;
+  final String filePath;
 
   IdCardBackOcr(
     this.signDate,
@@ -27,10 +27,10 @@ class IdCardBackOcr {
 
 IdCardBackOcr _$IdCardBackOcrFromJson(Map<String, dynamic> json) {
   return IdCardBackOcr(
-    json['signDate'] as String?,
-    json['expiryDate'] as String?,
-    json['issueAuthority'] as String?,
-    json['filePath'] as String?,
+    json['signDate'] as String,
+    json['expiryDate'] as String,
+    json['issueAuthority'] as String,
+    json['filePath'] as String,
   );
 }
 
